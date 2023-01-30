@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Response extends StatelessWidget {
   final String responseText;
+
   // forma de receber uma function como propriedade
   final void Function() onSelected;
 

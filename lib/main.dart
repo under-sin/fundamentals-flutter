@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:questions_project/question.dart';
-import 'package:questions_project/response.dart';
+import 'package:questions_project/quiz.dart';
+import 'package:questions_project/result.dart';
 
 main() => runApp(QuestionsApp());
 
@@ -9,35 +9,36 @@ main() => runApp(QuestionsApp());
 class _QuestionsAppState extends State<QuestionsApp> {
   var _selectQuestion = 0;
 
+  final _questions = const [
+    {
+      'text': 'Qual a sua cor favorita',
+      'response': ['Preto', 'Verde', 'Azul', 'Rosa']
+    },
+    {
+      'text': 'Qual a sua banda favorita',
+      'response': ['BMTH', 'Coldplay', 'Scarlen', 'Starset']
+    },
+    {
+      'text': 'Qual o seu animal favorito',
+      'response': ['Coruja', 'Sapo', 'Coala', 'Raposa']
+    }
+  ];
+
   void _response() {
-    setState(() {
-      _selectQuestion++;
-    });
-    print(_selectQuestion);
+    if (haveQuestion) {
+      setState(() {
+        _selectQuestion++;
+      });
+    }
+  }
+
+  // corrigindo problema quando passava do indice
+  bool get haveQuestion {
+    return _selectQuestion < _questions.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    final questions = [
-      {
-        'text': 'Qual a sua cor favorita',
-        'response': ['Preto', 'Verde', 'Azul', 'Rosa']
-      },
-      {
-        'text': 'Qual a sua banda favorita',
-        'response': ['BMTH', 'Coldplay', 'Scarlen', 'Starset']
-      },
-      {
-        'text': 'Qual o seu animal favorito',
-        'response': ['Coruja', 'Sapo', 'Coala', 'Raposa']
-      }
-    ];
-
-    List<Widget> answers = [];
-    for(String resp in questions[_selectQuestion].cast()['response']) {
-      answers.add(Response(resp, _response));
-    }
-
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -49,12 +50,13 @@ class _QuestionsAppState extends State<QuestionsApp> {
             ),
           ),
         ),
-        body: Column(
-          children: [
-            Question(questions[_selectQuestion]['text'].toString()),
-            ...answers,
-          ],
-        ),
+        body: haveQuestion
+            ? Quiz(
+                questions: _questions,
+                selectQuestion: _selectQuestion,
+                response: _response,
+              )
+            : Result(),
       ),
     );
   }
