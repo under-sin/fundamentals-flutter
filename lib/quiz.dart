@@ -5,7 +5,7 @@ import 'package:questions_project/response.dart';
 class Quiz extends StatelessWidget {
   final int selectQuestion;
   final List<Map<String, Object>> questions;
-  final void Function() response;
+  final void Function(int) response;
 
   Quiz({
     // required torna o parametro obrigatorio
@@ -20,13 +20,20 @@ class Quiz extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> resp =
-    haveQuestion ? questions[selectQuestion].cast()['response'] : [];
+    List<Map<String, Object>> resp = haveQuestion
+        ? questions[selectQuestion].cast()['response']
+            as List<Map<String, Object>>
+        : [];
 
     return Column(
-      children: [
+      children: <Widget>[
         Question(questions[selectQuestion]['text'].toString()),
-        ...resp.map((t) => Response(t, response)).toList(),
+        ...resp.map((resp) {
+          return Response(
+            resp['text'] as String,
+            () => response(int.parse(resp['punctuation'].toString())),
+          );
+        }).toList(),
       ],
     );
   }
